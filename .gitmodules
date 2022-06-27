@@ -1,0 +1,9 @@
+[submodule "log.c"]
+	path = log.c
+	url = https://github.com/rxi/log.c.git
+[submodule "JUCE"]
+	path = JUCE
+	url = https://github.com/juce-framework/JUCE.git
+[submodule "ECDICT"]
+	path = ECDICT
+	url = https://github.com/skywind3000/ECDICT.git
