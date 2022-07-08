@@ -424,6 +424,7 @@ void ConfigComponent::AccListener::buttonClicked(juce::Button*)
 			}
 		);
 		jmadf::JInterfaceDao<void>::call("showDownload");
+		return;
 	}
 
 	Config::save();
