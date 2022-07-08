@@ -7,6 +7,7 @@
 #include "JInterface.h"
 #include "ListThread.h"
 #include "WordList.h"
+#include "SearchThread.h"
 
 ConfigComponent::ConfigComponent()
 	:Component("Config Component")
@@ -395,6 +396,9 @@ void ConfigComponent::AccListener::buttonClicked(juce::Button*)
 		urlChanged || portChanged ||
 		!WordList::available()
 		) {
+		if (SearchThread::running()) {
+			SearchThread::startGet(juce::String());
+		}
 		ListThread::startGetAsync(
 			[this, lafChanged, lanChanged] {
 				if (!ListThread::result()) {

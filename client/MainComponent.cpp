@@ -244,6 +244,9 @@ void MainComponent::ConListener::buttonClicked(juce::Button*)
 
 void MainComponent::RefListener::buttonClicked(juce::Button*)
 {
+    if (SearchThread::running()) {
+        SearchThread::startGet(juce::String());
+    }
     ListThread::startGetAsync(
         [this] {
             if (!ListThread::result()) {

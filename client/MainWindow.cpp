@@ -22,6 +22,13 @@ MainWindow::MainWindow(juce::String name)
     this->setResizable(true, true);
     this->centreWithSize(screenSize.getWidth() / 2, screenSize.getHeight() / 2);
 #endif
+
+    this->openGL.attachTo(*mainPtr);
+}
+
+MainWindow::~MainWindow()
+{
+    this->openGL.detach();
 }
 
 void MainWindow::closeButtonPressed()
