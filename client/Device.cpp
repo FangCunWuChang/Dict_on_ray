@@ -15,7 +15,8 @@ const double Device::getScreenScale(juce::Component* component)
 	if (display == nullptr) {
 		return 1;
 	}
-	return display->scale;
+	//return display->scale;
+	return 1;
 }
 
 const juce::Displays::Display* Device::getCurrentScreen(juce::Component* component)
