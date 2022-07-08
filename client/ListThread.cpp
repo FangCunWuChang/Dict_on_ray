@@ -31,14 +31,12 @@ bool ListThread::running()
 
 void ListThread::startGet()
 {
-	ListThread::instance->callBack = [] {};
 	ListThread::instance->startThread();
 }
 
-void ListThread::startGetAsync(CallBack callBack)
+void ListThread::setCallBack(CallBack callBack)
 {
 	ListThread::instance->callBack = callBack;
-	ListThread::instance->startThread();
 }
 
 bool ListThread::result()

@@ -216,6 +216,18 @@ void ConfigComponent::push()
 	UIModel::setLanguage(this->cbLan->getText());
 }
 
+void ConfigComponent::pushEmpty()
+{
+	this->lastUrl = juce::String();
+	this->lastPort = -1;
+}
+
+void ConfigComponent::netFailed()
+{
+	Config::setUrl(this->lastUrl);
+	Config::setPort(this->lastPort);
+}
+
 void ConfigComponent::resized()
 {
 	const juce::Rectangle<int> screenRect = Device::getScreenSize(this);
@@ -356,9 +368,11 @@ void ConfigComponent::AccListener::buttonClicked(juce::Button*)
 
 	bool urlChanged = false, portChanged = false;
 	if (this->parent->teUrl->getText() != Config::getUrl()) {
+		this->parent->lastUrl = Config::getUrl();
 		urlChanged = true;
 	}
 	if (this->parent->tePort->getText().getIntValue() != Config::getPort()) {
+		this->parent->lastPort = Config::getPort();
 		portChanged = true;
 	}
 	Config::setUrl(this->parent->teUrl->getText());
@@ -399,31 +413,13 @@ void ConfigComponent::AccListener::buttonClicked(juce::Button*)
 		if (SearchThread::running()) {
 			SearchThread::startGet(juce::String());
 		}
-		ListThread::startGetAsync(
-			[this, lafChanged, lanChanged] {
-				if (!ListThread::result()) {
-					juce::AlertWindow::showMessageBox(
-						juce::MessageBoxIconType::WarningIcon,
-						Trans::tr("WT_Err"), Trans::tr("TE_Con"),
-						Trans::tr("BT_OK")
-					);
-					return;
-				}
-				Config::save();
-
-				juce::MessageManagerLock locker(juce::Thread::getCurrentThread());
-				UIModel::clearFlag();
-				this->parent->setVisible(false);
-
-				jmadf::JInterfaceDao<void>::call("resetSearch");
-
-				bool needRefresh = lafChanged || lanChanged;
-				if (needRefresh) {
-					jmadf::JInterfaceDao<void>::call("refreshUI");
-				}
-			}
-		);
+		ListThread::startGet();
 		jmadf::JInterfaceDao<void>::call("showDownload");
+
+		bool needRefresh = lafChanged || lanChanged;
+		if (needRefresh) {
+			jmadf::JInterfaceDao<void>::call("refreshUI");
+		}
 		return;
 	}
 

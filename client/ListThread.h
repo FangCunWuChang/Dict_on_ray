@@ -13,7 +13,7 @@ public:
 	static bool running();
 
 	static void startGet();
-	static void startGetAsync(CallBack);
+	static void setCallBack(CallBack);
 	static bool result();
 	static void waitGet();
 

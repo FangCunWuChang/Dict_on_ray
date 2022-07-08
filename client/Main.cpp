@@ -68,6 +68,7 @@ public:
 
         jmadf::JInterfaceDao<LAFColorType>::set("setLookAndFeel",
             [this, newWindowFunc](LAFColorType type) {
+                juce::MessageManagerLock locker(juce::Thread::getCurrentThread());
                 juce::LookAndFeel* laf = this->lookAndFeels[(int)type];
                 if (laf) {
                     juce::Desktop::getInstance()

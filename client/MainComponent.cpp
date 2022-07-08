@@ -10,6 +10,7 @@
 #include "WordListModel.h"
 #include "ResultThread.h"
 #include "SearchThread.h"
+#include "Config.h"
 
 MainComponent::MainComponent()
     : Component("Main Window Central Component")
@@ -146,6 +147,31 @@ MainComponent::MainComponent()
         }
     );
 
+    ListThread::setCallBack(
+        [this] {
+            if (!ListThread::result()) {
+                juce::AlertWindow::showMessageBox(
+                    juce::MessageBoxIconType::WarningIcon,
+                    Trans::tr("WT_Err"), Trans::tr("TE_Con"),
+                    Trans::tr("BT_OK")
+                );
+                juce::MessageManagerLock locker(juce::Thread::getCurrentThread());
+                this->_config->netFailed();
+                this->_config->show();
+                this->_config->setVisible(true);
+            }
+            else {
+                juce::MessageManagerLock locker(juce::Thread::getCurrentThread());
+
+                UIModel::clearFlag();
+                Config::save();
+
+                this->_config->setVisible(false);
+                jmadf::JInterfaceDao<void>::call("resetSearch");
+            }
+        }
+    );
+
     this->teSearch->onReturnKey = [this] {
         jmadf::JInterfaceDao<void>::call("showSearch");
         SearchThread::startGet(this->teSearch->getText());
@@ -170,6 +196,7 @@ MainComponent::~MainComponent()
     ResultThread::setCallBack(
         [](const juce::String& /*result*/, const juce::String& /*word*/, bool /*status*/) {}
     );
+    ListThread::setCallBack([] {});
     SearchThread::setCallBack([] {});
     UIModel::setSearch(this->teSearch->getText());
     UIModel::setResult(this->teResult->getText());
@@ -247,24 +274,8 @@ void MainComponent::RefListener::buttonClicked(juce::Button*)
     if (SearchThread::running()) {
         SearchThread::startGet(juce::String());
     }
-    ListThread::startGetAsync(
-        [this] {
-            if (!ListThread::result()) {
-                juce::AlertWindow::showMessageBox(
-                    juce::MessageBoxIconType::WarningIcon,
-                    Trans::tr("WT_Err"), Trans::tr("TE_Con"),
-                    Trans::tr("BT_OK")
-                );
-                juce::MessageManagerLock locker(juce::Thread::getCurrentThread());
-                this->parent->_config->show();
-                this->parent->_config->setVisible(true);
-            }
-            else {
-                juce::MessageManagerLock locker(juce::Thread::getCurrentThread());
-                jmadf::JInterfaceDao<void>::call("resetSearch");
-            }
-        }
-    );
+    this->parent->_config->pushEmpty();
+    ListThread::startGet();
     jmadf::JInterfaceDao<void>::call("showDownload");
 }
 

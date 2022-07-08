@@ -13,6 +13,9 @@ public:
 	void show();
 	void push();
 
+	void pushEmpty();
+	void netFailed();
+
 private:
 	std::unique_ptr<juce::GroupComponent> groupBox;
 	std::unique_ptr<juce::Label> lbUrl, lbPort, lbQuery, lbList, lbLAF, lbLan;
@@ -20,6 +23,9 @@ private:
 	std::unique_ptr<juce::TextButton> btTim, btSys, btDar, btLig;
 	std::unique_ptr<juce::ComboBox> cbLan;
 	std::unique_ptr<juce::DrawableButton> dbAcc, dbCan;
+
+	juce::String lastUrl;
+	int lastPort;
 
 private:
 	class AccListener final :public juce::Button::Listener
