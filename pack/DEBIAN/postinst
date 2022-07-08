@@ -1,0 +1,13 @@
+#!/bin/sh
+if [ ! -d "/root/dict/" ];then
+    mkdir "/root/dict/"
+fi
+if [ ! -d "/root/.ssl/" ];then
+    mkdir "/root/.ssl/"
+fi
+
+if [ ! -f "/root/dict/ENG_ZH.dicx" ];then
+    cp "/tmp/dict-on-ray/ENG_ZH.dicx" "/root/dict/"
+fi
+
+systemctl daemon-reload

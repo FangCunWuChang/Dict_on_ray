@@ -142,11 +142,11 @@ int dic_strcmp(const char* str1, const char* str2) {
 const char* get_dic_result(const char* word)
 {
 	uint32_t size = dic_mem.idw_size / sizeof(uint32_t);
-	uint64_t left = 0, right = (uint64_t)size - 1;
+	uint32_t left = 0, right = (uint32_t)size - 1;
 
 	while (left <= right)
 	{
-		uint64_t mid = left + (right - left) / 2;
+		uint32_t mid = left + (right - left) / 2;
 		const char* pw = LST_CHAR_PTR(mid);
 
 		if (dic_strcmp(pw, word) < 0)
@@ -181,8 +181,8 @@ const char* get_dic_word(const char* word, const char* peer_address, uint16_t pe
 	if (!res) {
 		return NULL;
 	}
-	memset(res, '\0', maxsize);
-	int r = sprintf(res, format, peer_address, peer_port, status ? "true" : "false", word, result);
+	memset((void*)res, '\0', maxsize);
+	int r = sprintf((char*)res, format, peer_address, peer_port, status ? "true" : "false", word, result);
 	return res;
 }
 
@@ -250,8 +250,8 @@ do { \
 	const char* str_temp = malloc(strlen(src) + 1); \
 	if (str_temp != NULL) { \
 		(dst) = str_temp; \
-		memset((dst), '\0', strlen(src) + 1); \
-		strcpy((dst), (src)); } \
+		memset((void*)(dst), '\0', strlen(src) + 1); \
+		strcpy((char*)(dst), (const char*)(src)); } \
 } while (0);
 
 

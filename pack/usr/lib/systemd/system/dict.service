@@ -1,0 +1,15 @@
+[Unit]
+Description=Dict-on-ray server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/dict-server --port 1234
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStop=/bin/kill -QUIT $MAINPID
+KillMode=process
+Restart=always
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target

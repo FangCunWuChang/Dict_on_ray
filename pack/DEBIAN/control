@@ -1,0 +1,8 @@
+Package: Dict-on-ray-server
+Priority: optional
+Section: free
+Maintainer: WuChang <3142324836@qq.com>
+Architecture: amd64
+Version: 1.0.0
+Depends: libssl1.1, libevent-2.1-7, libstdc++6
+Description: Dict-on-ray server and dictionary complier.

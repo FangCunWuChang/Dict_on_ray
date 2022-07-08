@@ -149,7 +149,7 @@ static void send_document_cb(struct evhttp_request* req, void* arg)
         return;
     }
 
-    evhttp_uri_free(decoded);
+    log_info("[%s] Got a query <%s>\n", peer_addr, query);
 	
     /* Decode the query */
     struct evkeyvalq kv;
@@ -158,19 +158,23 @@ static void send_document_cb(struct evhttp_request* req, void* arg)
 
     /* Extract passcode */
     const char* word = evhttp_find_header(&kv, conf_get_query());
-    evhttp_clear_headers(&kv);   /* to free memory held by kv */
-	
+
     if (!word) {
         log_warn("[%s] It's not a good query. Sending BADREQUEST\n", peer_addr);
         evhttp_send_error(req, HTTP_BADREQUEST, NULL);
+        evhttp_uri_free(decoded);
+        evhttp_clear_headers(&kv);
         dic_https_close_connection();
         return;
     }
 	
     const char* response = get_dic_word(word, peer_addr, peer_port);
+    evhttp_clear_headers(&kv);
+
     if (!response) {
         log_error("[%s] Dic returns NULL. Sending SERVUNAVAIL\n", peer_addr);
         evhttp_send_error(req, HTTP_SERVUNAVAIL, NULL);
+        evhttp_uri_free(decoded);
         dic_https_close_connection();
         return;
     }
@@ -179,8 +183,9 @@ static void send_document_cb(struct evhttp_request* req, void* arg)
     if (evb == NULL) {
         log_error("[%s] Buffer returns NULL. Sending SERVUNAVAIL\n", peer_addr);
         evhttp_send_error(req, HTTP_SERVUNAVAIL, NULL);
+        evhttp_uri_free(decoded);
         dic_https_close_connection();
-        free(response);
+        free((void*)response);
         return;
     }
 
@@ -189,9 +194,10 @@ static void send_document_cb(struct evhttp_request* req, void* arg)
     evbuffer_add(evb, response, strlen(response));
 
     evhttp_send_reply(req, HTTP_OK, "OK", evb);
-	
+
+    evhttp_uri_free(decoded);
     evbuffer_free(evb);
-    free(response);
+    free((void*)response);
 	
     dic_https_close_connection();
 }

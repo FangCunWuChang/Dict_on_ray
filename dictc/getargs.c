@@ -23,8 +23,8 @@ do { \
 	const char* str_temp = malloc(strlen(src) + 1); \
 	if (str_temp != NULL) { \
 		(dst) = str_temp; \
-		memset((dst), '\0', strlen(src) + 1); \
-		strcpy((dst), (src)); } \
+		memset((void*)(dst), '\0', strlen(src) + 1); \
+		strcpy((char*)(dst), (const char*)(src)); } \
 } while (0);
 
 void set_out_file()
@@ -40,16 +40,16 @@ void set_out_file()
 	if (pindex == 0) {
 		conf_opt.out = malloc(inlen + 5 + 1);
 		if (conf_opt.out == NULL) { printf("Fatal!\n"); exit(1); }
-		memset(conf_opt.out, '\0', inlen + 5 + 1);
-		memcpy(conf_opt.out, conf_opt.in, inlen);
-		memcpy(conf_opt.out + inlen, ".dicx", 5);
+		memset((void*)conf_opt.out, '\0', inlen + 5 + 1);
+		memcpy((void*)conf_opt.out, (const void*)conf_opt.in, inlen);
+		memcpy((void*)(conf_opt.out + inlen), (const void*)".dicx", 5);
 	}
 	else {
 		conf_opt.out = malloc(pindex + 5 + 1);
 		if (conf_opt.out == NULL) { printf("Fatal!\n"); exit(1); }
-		memset(conf_opt.out, '\0', pindex + 5 + 1);
-		memcpy(conf_opt.out, conf_opt.in, pindex);
-		memcpy(conf_opt.out + pindex, ".dicx", 5);
+		memset((void*)conf_opt.out, '\0', pindex + 5 + 1);
+		memcpy((void*)conf_opt.out, (const void*)conf_opt.in, pindex);
+		memcpy((void*)(conf_opt.out + pindex), (const void*)".dicx", 5);
 	}
 }
 

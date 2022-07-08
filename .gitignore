@@ -50,6 +50,8 @@
 [Oo]ut/[Ii]nstall/**
 [Bb]uild/**
 [Ii]nstall/**
+cmake-build-debug/**
+cmake-build-release/**
 
 # Outputs of the build
 [Oo]ut/**

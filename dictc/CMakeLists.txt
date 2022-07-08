@@ -1,5 +1,5 @@
 #设置目标名称
-set (TARGET_NAME "dictc")
+set (TARGET_NAME ${DIICTC_TARGET})
 
 #添加源文件
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} TARGET_SRC)
@@ -87,3 +87,51 @@ set_target_properties (
     LIBRARY_OUTPUT_DIRECTORY "${OUT_DIR}/${TARGET_NAME}"
     RUNTIME_OUTPUT_DIRECTORY "${OUT_DIR}/${TARGET_NAME}"
 )
+
+#运行环境配置
+add_custom_command (
+	TARGET ${TARGET_NAME}
+	POST_BUILD
+	COMMAND $<TARGET_FILE:${TARGET_NAME}>
+	--in ${ECDICT_DIR}/ecdict.csv
+	--out ${SERVER_SOURCE}/etc/ENG_ZH.dicx
+)
+if (NOT WIN32)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND mkdir -p
+		${OUT_DIR}/pack/
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND cp -r -u
+		${PACK_DIR}/* ${OUT_DIR}/pack/
+	)
+
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND mkdir -p
+		"${OUT_DIR}/pack/tmp/dict-on-ray/"
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND cp -u
+		"${SERVER_SOURCE}/etc/ENG_ZH.dicx" "${OUT_DIR}/pack/tmp/dict-on-ray/"
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND mkdir -p
+		"${OUT_DIR}/pack/usr/bin/"
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND cp -u
+		$<TARGET_FILE:${TARGET_NAME}> "${OUT_DIR}/pack/usr/bin/dictc"
+	)
+endif ()

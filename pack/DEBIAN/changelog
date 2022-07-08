@@ -1,0 +1,4 @@
+Dict-on-ray-server (1.0.0) unstable; urgency=low
+  [ WuChang ]
+  * Dict_on_ray server and dictionary complier.
+  -- WuChang <3142324836@qq.com>  Tue, 26 Jun 2022 21:00:00 +0800

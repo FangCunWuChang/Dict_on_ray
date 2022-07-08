@@ -3,7 +3,7 @@ find_package (Libevent CONFIG REQUIRED)
 find_package (OpenSSL REQUIRED)
 
 #设置目标名称
-set (TARGET_NAME "server")
+set (TARGET_NAME ${SERVER_TARGET})
 
 #添加源文件
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} TARGET_SRC)
@@ -113,15 +113,66 @@ set_target_properties (
 )
 
 #运行环境配置
-file (GLOB ETC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/etc/*)
-foreach (ITEM ${ETC_FILE})
+if (WIN32)
+	file (GLOB ETC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/etc/*)
+	foreach (ITEM ${ETC_FILE})
+		add_custom_command (
+			TARGET ${TARGET_NAME}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E
+			copy_if_different
+			${ITEM} ${OUT_DIR}/${TARGET_NAME}/
+		)
+	endforeach ()
+else ()
 	add_custom_command (
 		TARGET ${TARGET_NAME}
 		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E
-		copy_if_different
-		${ITEM} ${OUT_DIR}/${TARGET_NAME}/
+		COMMAND mkdir -p
+		${OUT_DIR}/pack/
 	)
-endforeach ()
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND cp -r -u
+		${PACK_DIR}/* ${OUT_DIR}/pack/
+	)
 
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND mkdir -p
+		"${OUT_DIR}/pack/tmp/dict-on-ray/"
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND cp -u
+		"${CMAKE_CURRENT_SOURCE_DIR}/etc/ENG_ZH.dicx" "${OUT_DIR}/pack/tmp/dict-on-ray/"
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND mkdir -p
+		"${OUT_DIR}/pack/usr/bin/"
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND cp -u
+		$<TARGET_FILE:${TARGET_NAME}> "${OUT_DIR}/pack/usr/bin/dict-server"
+	)
 
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND chmod 755
+		"${OUT_DIR}/pack" -R
+	)
+	add_custom_command (
+		TARGET ${TARGET_NAME}
+		POST_BUILD
+		COMMAND dpkg -b
+		"${OUT_DIR}/pack" "${OUT_DIR}/Dict-on-ray-server-ubuntu2004-amd64.deb"
+	)
+endif ()

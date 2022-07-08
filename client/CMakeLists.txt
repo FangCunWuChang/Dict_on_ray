@@ -1,5 +1,14 @@
+#依赖库查找
+if (UNIX AND NOT APPLE)
+	find_package (PkgConfig REQUIRED)
+	pkg_search_module (FREETYPE2 REQUIRED freetype2)
+	pkg_search_module (LIBCURL REQUIRED libcurl)
+	pkg_search_module (WEBKIT2GTK-4.0 REQUIRED webkit2gtk-4.0)
+	pkg_search_module (GTK+-X11-3.0 REQUIRED gtk+-x11-3.0)
+endif ()
+
 #设置目标名称
-set (TARGET_NAME "client")
+set (TARGET_NAME ${CLIENT_TARGET})
 
 #添加源文件
 if (APPLE)
@@ -7,11 +16,20 @@ if (APPLE)
 else ()
 	file (GLOB TARGET_SRC ${CMAKE_CURRENT_SOURCE_DIR}/JuceHeader/*.cpp)
 endif ()
+file (GLOB TARGET_RC ${CMAKE_CURRENT_SOURCE_DIR}/rc/*.rc)
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} TARGET_SRC)
 
 #添加包含目录
 include_directories (${CMAKE_CURRENT_SOURCE_DIR}/JuceHeader)
 include_directories (${JUCE_DIR})
+if (UNIX AND NOT APPLE)
+	include_directories (
+	    ${FREETYPE2_INCLUDE_DIRS}
+	    ${LIBCURL_INCLUDE_DIRS}
+	    ${WEBKIT2GTK-4.0_INCLUDE_DIRS}
+	    ${GTK+-X11-3.0_INCLUDE_DIRS}
+	)
+endif ()
 
 #设置编译宏
 if (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
@@ -21,6 +39,7 @@ elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 endif ()
 if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	add_compile_definitions (_CRT_SECURE_NO_WARNINGS)
+	add_compile_definitions(UNICODE _UNICODE)
 endif ()
 add_compile_definitions (
 	JUCE_DISPLAY_SPLASH_SCREEN=0
@@ -120,8 +139,29 @@ elseif (CMAKE_BUILD_TYPE AND (CMAKE_BUILD_TYPE STREQUAL "Release"))
 	endif ()
 endif ()
 
+#查找库
+if (UNIX AND NOT APPLE)
+	find_library (RT rt)
+	find_library (DL dl)
+	find_library (PTHREAD pthread)
+	find_library (GL GL)
+endif ()
+
 #设置编译目标
-add_executable (${TARGET_NAME} ${TARGET_SRC})
+add_executable (${TARGET_NAME} ${TARGET_SRC} ${TARGET_RC})
+
+#链接库
+if (UNIX AND NOT APPLE)
+	target_link_libraries (
+		${TARGET_NAME} PRIVATE
+		${RT}
+		${DL}
+		${PTHREAD}
+		${GL}
+		${FREETYPE2_LIBRARIES}
+		${LIBCURL_LIBRARIES}
+	)
+endif ()
 
 #设置目标位置
 set_target_properties (

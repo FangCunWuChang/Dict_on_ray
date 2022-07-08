@@ -22,7 +22,21 @@ set (OUT_DIR "${CMAKE_SOURCE_DIR}/out")
 set (LOGC_DIR "${CMAKE_SOURCE_DIR}/log.c/src")
 set (JUCE_DIR "${CMAKE_SOURCE_DIR}/JUCE/modules")
 
+#环境目录
+set (PACK_DIR "${CMAKE_SOURCE_DIR}/pack")
+set (ECDICT_DIR "${CMAKE_SOURCE_DIR}/ECDICT")
+
+#编译目标名
+set (DIICTC_TARGET dictc)
+set (SERVER_TARGET server)
+set (CLIENT_TARGET client)
+
+#编译目标源码路径
+set (DIICTC_SOURCE ${CMAKE_SOURCE_DIR}/dictc)
+set (SERVER_SOURCE ${CMAKE_SOURCE_DIR}/server)
+set (CLIENT_SOURCE ${CMAKE_SOURCE_DIR}/client)
+
 #编译目标
-add_subdirectory (server)
-add_subdirectory (client)
-add_subdirectory (dictc)
+add_subdirectory (${DIICTC_SOURCE})
+add_subdirectory (${SERVER_SOURCE})
+add_subdirectory (${CLIENT_SOURCE})
