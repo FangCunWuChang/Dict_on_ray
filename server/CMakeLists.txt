@@ -112,6 +112,9 @@ set_target_properties (
     RUNTIME_OUTPUT_DIRECTORY "${OUT_DIR}/${TARGET_NAME}"
 )
 
+#设置目标依赖关系
+add_dependencies (${TARGET_NAME} ${DICTC_TARGET})
+
 #运行环境配置
 if (WIN32)
 	file (GLOB ETC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/etc/*)

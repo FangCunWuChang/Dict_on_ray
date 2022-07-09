@@ -1,5 +1,5 @@
 #设置目标名称
-set (TARGET_NAME ${DIICTC_TARGET})
+set (TARGET_NAME ${DICTC_TARGET})
 
 #添加源文件
 aux_source_directory (${CMAKE_CURRENT_SOURCE_DIR} TARGET_SRC)

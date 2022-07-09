@@ -27,16 +27,16 @@ set (PACK_DIR "${CMAKE_SOURCE_DIR}/pack")
 set (ECDICT_DIR "${CMAKE_SOURCE_DIR}/ECDICT")
 
 #编译目标名
-set (DIICTC_TARGET dictc)
+set (DICTC_TARGET dictc)
 set (SERVER_TARGET server)
 set (CLIENT_TARGET client)
 
 #编译目标源码路径
-set (DIICTC_SOURCE ${CMAKE_SOURCE_DIR}/dictc)
+set (DICTC_SOURCE ${CMAKE_SOURCE_DIR}/dictc)
 set (SERVER_SOURCE ${CMAKE_SOURCE_DIR}/server)
 set (CLIENT_SOURCE ${CMAKE_SOURCE_DIR}/client)
 
 #编译目标
-add_subdirectory (${DIICTC_SOURCE})
+add_subdirectory (${DICTC_SOURCE})
 add_subdirectory (${SERVER_SOURCE})
 add_subdirectory (${CLIENT_SOURCE})
